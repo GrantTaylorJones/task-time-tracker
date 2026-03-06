@@ -16,6 +16,9 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
   const [titleValue, setTitleValue] = useState(project.title);
   const [descValue, setDescValue] = useState(project.description);
 
+  const isDefaultTitle = project.title === "My Project";
+  const isDefaultDesc = project.description === "Click to edit this description";
+
   function handleAddTask() {
     const name = newTaskName.trim();
     if (!name) return;
@@ -102,7 +105,10 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
             </div>
           ) : (
             <h1
-              onClick={() => setEditingTitle(true)}
+              onClick={() => {
+                if (isDefaultTitle) setTitleValue("");
+                setEditingTitle(true);
+              }}
               className="text-3xl font-bold text-slate-800 cursor-pointer hover:text-blue-600 transition-colors mb-2"
               title="Click to edit"
             >
@@ -128,7 +134,10 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
             </div>
           ) : (
             <p
-              onClick={() => setEditingDesc(true)}
+              onClick={() => {
+                if (isDefaultDesc) setDescValue("");
+                setEditingDesc(true);
+              }}
               className="text-slate-500 cursor-pointer hover:text-blue-600 transition-colors"
               title="Click to edit"
             >
