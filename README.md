@@ -1,73 +1,71 @@
-# React + TypeScript + Vite
+# Task Time Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, effective time tracking app for managing tasks and logging hours. Built with React, TypeScript, and Tailwind CSS. Data is stored locally in your browser using `localStorage`.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Add tasks** on the main page with a single click
+- **Editable project title & description** at the top
+- **+30 minute increment button** for quick time logging
+- **Manual time entry** — add custom minutes for any date
+- **Inline editing** — click any time entry to adjust the minutes
+- **Task detail view** — click a task to see total time and a weekly breakdown by day
+- **Persistent storage** — data survives page refreshes, browser restarts, and reboots
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- [Node.js](https://nodejs.org/) (v20.19+ or v22.12+)
+- npm (comes with Node.js)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Install dependencies
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Start the development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Then open [http://localhost:5173/](http://localhost:5173/) in your browser.
+
+> **Note:** You need to keep this terminal running while using the app. The dev server compiles the TypeScript/React code on the fly and serves it to your browser.
+
+### Production build & preview
+
+To build optimized files and preview them locally:
+
+```bash
+npm run build
+npx vite preview
+```
+
+This serves the app at [http://localhost:4173/](http://localhost:4173/).
+
+## Project Structure
+
+```
+src/
+├── types.ts                 # TypeScript interfaces (Project, Task, TimeEntry)
+├── storage.ts               # localStorage read/write abstraction
+├── utils.ts                 # ID generation, date formatting, week grouping
+├── pages/
+│   ├── HomePage.tsx         # Main task list page
+│   └── TaskDetailPage.tsx   # Task detail with weekly breakdown
+├── App.tsx                  # Router setup & state management
+├── main.tsx                 # App entry point
+└── index.css                # Tailwind CSS imports & base styles
+```
+
+## Tech Stack
+
+- **React** — UI framework
+- **TypeScript** — type-safe JavaScript
+- **Tailwind CSS** — utility-first styling
+- **Vite** — build tool & dev server
+- **React Router** — client-side navigation
+- **localStorage** — browser-native data persistence
