@@ -1,14 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Project, Task } from "../types";
+import type { UserInfo } from "../storage";
 import { generateId, getTodayISO, formatMinutes } from "../utils";
 
 interface HomePageProps {
   project: Project;
   onUpdate: (project: Project) => void;
+  user: UserInfo | null;
+  authChecked: boolean;
+  syncing: boolean;
 }
 
-export default function HomePage({ project, onUpdate }: HomePageProps) {
+export default function HomePage({
+  project,
+  onUpdate,
+  user,
+  authChecked,
+  syncing,
+}: HomePageProps) {
   const navigate = useNavigate();
   const [newTaskName, setNewTaskName] = useState("");
   const [editingTitle, setEditingTitle] = useState(false);
@@ -17,7 +27,8 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
   const [descValue, setDescValue] = useState(project.description);
 
   const isDefaultTitle = project.title === "My Project";
-  const isDefaultDesc = project.description === "Click to edit this description";
+  const isDefaultDesc =
+    project.description === "Click to edit this description";
 
   function handleAddTask() {
     const name = newTaskName.trim();
@@ -83,7 +94,54 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Top bar with auth */}
+      <div className="bg-white border-b border-slate-200 px-4 py-2">
+        <div className="max-w-3xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-600">
+              ⏱️ Task Time Tracker
+            </span>
+            {syncing && (
+              <span className="text-xs text-blue-500 animate-pulse">
+                Syncing...
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {!authChecked ? (
+              <span className="text-sm text-slate-400">Loading...</span>
+            ) : user ? (
+              <>
+                <span className="text-sm text-slate-600">
+                  {user.userDetails}
+                </span>
+                <a
+                  href="/logout"
+                  className="text-sm text-red-500 hover:text-red-700 font-medium"
+                >
+                  Sign out
+                </a>
+              </>
+            ) : (
+              <a
+                href="/login"
+                className="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 font-medium"
+              >
+                Sign in with Microsoft
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-3xl mx-auto px-4 py-8">
+        {/* Cloud sync notice */}
+        {authChecked && !user && (
+          <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+            📌 You're using local storage only. <a href="/login" className="font-medium underline hover:text-amber-900">Sign in with Microsoft</a> to sync your data across devices.
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           {editingTitle ? (
@@ -169,7 +227,9 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
         {project.tasks.length === 0 ? (
           <div className="text-center py-16 text-slate-400">
             <div className="text-5xl mb-4">📋</div>
-            <p className="text-lg">No tasks yet. Add one above to get started!</p>
+            <p className="text-lg">
+              No tasks yet. Add one above to get started!
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -187,8 +247,12 @@ export default function HomePage({ project, onUpdate }: HomePageProps) {
                       {task.name}
                     </h3>
                     <div className="flex gap-4 mt-1 text-sm text-slate-500">
-                      <span>Total: {formatMinutes(getTotalMinutes(task))}</span>
-                      <span>Today: {formatMinutes(getTodayMinutes(task))}</span>
+                      <span>
+                        Total: {formatMinutes(getTotalMinutes(task))}
+                      </span>
+                      <span>
+                        Today: {formatMinutes(getTodayMinutes(task))}
+                      </span>
                     </div>
                   </div>
 

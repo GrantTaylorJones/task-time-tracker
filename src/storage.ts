@@ -8,7 +8,9 @@ const DEFAULT_PROJECT: Project = {
   tasks: [],
 };
 
-export function loadProject(): Project {
+// --- localStorage (offline fallback / cache) ---
+
+export function loadProjectFromLocal(): Project {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -20,10 +22,59 @@ export function loadProject(): Project {
   return { ...DEFAULT_PROJECT, tasks: [] };
 }
 
-export function saveProject(project: Project): void {
+export function saveProjectToLocal(project: Project): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(project));
   } catch (e) {
     console.error("Failed to save project to localStorage", e);
+  }
+}
+
+// --- API (cloud storage via Azure) ---
+
+export async function loadProjectFromAPI(): Promise<Project> {
+  const res = await fetch("/api/project");
+  if (res.status === 401) {
+    throw new Error("Not authenticated");
+  }
+  if (!res.ok) {
+    throw new Error("Failed to load project from API");
+  }
+  return (await res.json()) as Project;
+}
+
+export async function saveProjectToAPI(project: Project): Promise<void> {
+  const res = await fetch("/api/project", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(project),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to save project to API");
+  }
+}
+
+// --- Auth helpers ---
+
+export interface UserInfo {
+  userId: string;
+  userDetails: string; // email or display name
+  identityProvider: string;
+}
+
+export async function getAuthUser(): Promise<UserInfo | null> {
+  try {
+    const res = await fetch("/.auth/me");
+    if (!res.ok) return null;
+    const data = await res.json();
+    const principal = data?.clientPrincipal;
+    if (!principal) return null;
+    return {
+      userId: principal.userId,
+      userDetails: principal.userDetails,
+      identityProvider: principal.identityProvider,
+    };
+  } catch {
+    return null;
   }
 }
