@@ -35,12 +35,6 @@ npm run dev
 
 Deployments happen automatically when you push to `main`. GitHub Actions builds the React app and deploys it to Azure Static Web Apps.
 
-## Azure Resources
-
-- **Resource Group:** `rg-task-tracker`
-- **Cosmos DB Account:** `task-tracker-cosmos` (database: `task-tracker`, container: `projects`)
-- **Static Web App:** `task-time-tracker`
-
 ## Tech Stack
 
 - React + TypeScript + Vite
