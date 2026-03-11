@@ -66,11 +66,6 @@ export default function HomePage({
     onUpdate({ ...project, tasks });
   }
 
-  function handleDeleteTask(taskId: string) {
-    const tasks = project.tasks.filter((t) => t.id !== taskId);
-    onUpdate({ ...project, tasks });
-  }
-
   function handleSaveTitle() {
     onUpdate({ ...project, title: titleValue });
     setEditingTitle(false);
@@ -263,13 +258,6 @@ export default function HomePage({
                       title="Add 30 minutes for today"
                     >
                       +30m
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTask(task.id)}
-                      className="text-slate-400 hover:text-red-500 px-2 py-1.5 rounded-lg transition-colors"
-                      title="Delete task"
-                    >
-                      🗑️
                     </button>
                   </div>
                 </div>

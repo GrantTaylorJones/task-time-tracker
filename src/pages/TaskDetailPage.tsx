@@ -23,6 +23,8 @@ export default function TaskDetailPage({
   const navigate = useNavigate();
   const task = project.tasks.find((t) => t.id === taskId);
 
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState(task?.name || "");
   const [addingEntry, setAddingEntry] = useState(false);
   const [entryDate, setEntryDate] = useState(getTodayISO());
   const [entryMinutes, setEntryMinutes] = useState("30");
@@ -55,6 +57,22 @@ export default function TaskDetailPage({
       t.id === taskId ? { ...t, entries: updatedEntries } : t
     );
     onUpdate({ ...project, tasks });
+  }
+
+  function handleSaveName() {
+    const trimmed = nameValue.trim();
+    if (!trimmed) return;
+    const tasks = project.tasks.map((t) =>
+      t.id === taskId ? { ...t, name: trimmed } : t
+    );
+    onUpdate({ ...project, tasks });
+    setEditingName(false);
+  }
+
+  function handleDeleteTask() {
+    const tasks = project.tasks.filter((t) => t.id !== taskId);
+    onUpdate({ ...project, tasks });
+    navigate("/");
   }
 
   function handleIncrement() {
@@ -130,9 +148,63 @@ export default function TaskDetailPage({
 
         {/* Task Header */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">
-            {task.name}
-          </h1>
+          <div className="flex items-start justify-between mb-2">
+            {editingName ? (
+              <div className="flex items-center gap-2 flex-1">
+                <input
+                  type="text"
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSaveName();
+                    if (e.key === "Escape") setEditingName(false);
+                  }}
+                  className="text-2xl font-bold bg-white border-2 border-blue-400 rounded-lg px-3 py-1 flex-1 outline-none focus:border-blue-600"
+                  autoFocus
+                />
+                <button
+                  onClick={handleSaveName}
+                  className="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => {
+                    setNameValue(task.name);
+                    setEditingName(false);
+                  }}
+                  className="text-sm text-slate-500 hover:text-slate-700 px-3 py-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <h1 className="text-2xl font-bold text-slate-800">
+                {task.name}
+              </h1>
+            )}
+            {!editingName && (
+              <div className="flex items-center gap-2 ml-4">
+                <button
+                  onClick={() => {
+                    setNameValue(task.name);
+                    setEditingName(true);
+                  }}
+                  className="text-slate-400 hover:text-blue-600 px-2 py-1 rounded-lg transition-colors text-sm"
+                  title="Edit task"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleDeleteTask}
+                  className="text-slate-400 hover:text-red-600 px-2 py-1 rounded-lg transition-colors text-sm"
+                  title="Delete task"
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-6">
             <div>
               <span className="text-sm text-slate-500">Total time</span>
