@@ -1,7 +1,6 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "start": "func start",
     "build": "tsc"
@@ -10,7 +9,7 @@
     "@azure/cosmos": "^4.2.0"
   },
   "devDependencies": {
-    "@azure/functions": "^4.6.0",
+    "@azure/functions": "^3.5.1",
     "typescript": "~5.9.3"
   }
 }

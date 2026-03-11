@@ -38,7 +38,14 @@ export async function loadProjectFromAPI(): Promise<Project> {
     throw new Error("Not authenticated");
   }
   if (!res.ok) {
-    throw new Error("Failed to load project from API");
+    let detail = `HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body?.error) detail = body.error;
+    } catch {
+      // ignore parse error
+    }
+    throw new Error(`Failed to load project from API: ${detail}`);
   }
   return (await res.json()) as Project;
 }
@@ -50,7 +57,14 @@ export async function saveProjectToAPI(project: Project): Promise<void> {
     body: JSON.stringify(project),
   });
   if (!res.ok) {
-    throw new Error("Failed to save project to API");
+    let detail = `HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body?.error) detail = body.error;
+    } catch {
+      // ignore parse error
+    }
+    throw new Error(`Failed to save project to API: ${detail}`);
   }
 }
 

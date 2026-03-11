@@ -17,6 +17,7 @@ export default function App() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -30,13 +31,16 @@ export default function App() {
   useEffect(() => {
     if (!user) return;
     setSyncing(true);
+    setSyncError(null);
     loadProjectFromAPI()
       .then((p) => {
         setProject(p);
         saveProjectToLocal(p);
+        setSyncError(null);
       })
       .catch((err) => {
         console.error("Failed to load from API, using local data:", err);
+        setSyncError(`Load failed: ${err.message}`);
       })
       .finally(() => setSyncing(false));
   }, [user]);
@@ -48,9 +52,12 @@ export default function App() {
       saveProjectToLocal(updated);
 
       if (user) {
-        saveProjectToAPI(updated).catch((err) => {
-          console.error("Failed to save to API:", err);
-        });
+        saveProjectToAPI(updated)
+          .then(() => setSyncError(null))
+          .catch((err) => {
+            console.error("Failed to save to API:", err);
+            setSyncError(`Save failed: ${err.message}`);
+          });
       }
     },
     [user]
@@ -68,6 +75,7 @@ export default function App() {
               user={user}
               authChecked={authChecked}
               syncing={syncing}
+              syncError={syncError}
             />
           }
         />

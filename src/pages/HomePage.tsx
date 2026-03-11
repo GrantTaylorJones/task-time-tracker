@@ -10,6 +10,7 @@ interface HomePageProps {
   user: UserInfo | null;
   authChecked: boolean;
   syncing: boolean;
+  syncError: string | null;
 }
 
 export default function HomePage({
@@ -18,6 +19,7 @@ export default function HomePage({
   user,
   authChecked,
   syncing,
+  syncError,
 }: HomePageProps) {
   const navigate = useNavigate();
   const [newTaskName, setNewTaskName] = useState("");
@@ -101,6 +103,16 @@ export default function HomePage({
                 Syncing...
               </span>
             )}
+            {!syncing && syncError && (
+              <span className="text-xs text-red-500 font-medium">
+                ⚠ Sync error
+              </span>
+            )}
+            {!syncing && !syncError && user && (
+              <span className="text-xs text-emerald-500">
+                ✓ Synced
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3">
             {!authChecked ? (
@@ -130,6 +142,15 @@ export default function HomePage({
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
+        {/* Sync error banner */}
+        {syncError && (
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+            <div className="font-medium mb-1">⚠️ Cloud sync error</div>
+            <div className="text-red-700 font-mono text-xs break-all">{syncError}</div>
+            <div className="mt-2 text-red-600">Your data is saved locally but is not syncing to the cloud. Changes won't appear on other devices.</div>
+          </div>
+        )}
+
         {/* Cloud sync notice */}
         {authChecked && !user && (
           <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
