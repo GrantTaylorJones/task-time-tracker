@@ -24,12 +24,12 @@ A web app for tracking time spent on tasks, with cloud sync across devices.
 
 ## Local Development
 
+If opting to not use Microsoft Auth, the app runs at http://localhost:5173, using local browser storage.
+
 ```bash
 npm install
 npm run dev
 ```
-
-The app runs at http://localhost:5173. Without Azure auth, it uses localStorage only.
 
 ## Deployment
 
